@@ -11,6 +11,8 @@ var (
 	x1000text = []string{"", " Duizend ", " Miljoen ", " Miljard ", " Biljoen ", " Biljard ", " Triljoen ", " Triljard ", " Quadriljoen ", " Quadriljard ", " Quintiljoen ", " Quintiljard ", " Sextiljoen ", " Sextiljard ", " Septiljoen ", " Septiljard ", " Octiljoen ", " Octiljard ", " Noniljoen ", " Noniljard ", " Deciljoen ", " Deciljard "}
 )
 
+const maxIndex = 21 // Maximale index om fouten te voorkomen
+
 type Number struct {
 	amount        big.Int
 	dig           big.Int
@@ -49,14 +51,19 @@ func setX1000(value *Number) {
 	// Bepaal index (elke 3 extra cijfers betekent +1 in x1000-index)
 	value.x1000 = (length - 1) / 3
 
-	// Deel het getal door de juiste macht van 1000
+	// **Voorkom dat x1000 buiten de limiet gaat**
+	if value.x1000 > maxIndex {
+		value.x1000 = maxIndex
+	}
+
+	// Deel het getal door 1000^index
 	divisor := new(big.Int).Exp(big.NewInt(1000), big.NewInt(int64(value.x1000)), nil)
 	value.dig.Div(&value.amount, divisor)
 
-	// **Afkappen na de eerste 2 cijfers**
+	// **Afkappen na de eerste 3 significante cijfers**
 	digStr := value.dig.String()
-	if len(digStr) > 2 {
-		digStr = digStr[:2] // Behoud enkel de eerste 2 significante cijfers
+	if len(digStr) > 7 { // Zorg ervoor dat we niet te veel cijfers tonen
+		digStr = digStr[:7]
 	}
 	value.dig.SetString(digStr, 10) // Zet terug naar een big.Int
 }
@@ -87,9 +94,8 @@ func setMoney(value *Number, input string) {
 	setX1000(value)
 }
 
-// Toont het geformatteerde resultaat
 func show(value Number) {
-	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), value.dig.String(), x1000text[value.x1000], x1000[value.x1000])
+	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), formatBigNumber(value.dig.String()), x1000text[value.x1000], x1000[value.x1000])
 }
 
 func main() {
