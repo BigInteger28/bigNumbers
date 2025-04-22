@@ -7,11 +7,11 @@ import (
 )
 
 var (
-	x1000     = []string{"", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q", "X11", "X12", "X13", "X14", "X15", "X16", "X17", "X18", "X19", "X20", "X21"}
-	x1000text = []string{"", " Duizend ", " Miljoen ", " Miljard ", " Biljoen ", " Biljard ", " Triljoen ", " Triljard ", " Quadriljoen ", " Quadriljard ", " Quintiljoen ", " Quintiljard ", " Sextiljoen ", " Sextiljard ", " Septiljoen ", " Septiljard ", " Octiljoen ", " Octiljard ", " Noniljoen ", " Noniljard ", " Deciljoen ", " Deciljard "}
+	x1000     = []string{"", "k", "M", "G", "T", "P", "E", "Z", "Y", "R", "Q", "X11", "X12", "X13", "X14", "X15", "X16", "X17", "X18", "X19", "X20", "X21", "X22", "X23", "X24", "X25", "X26", "X27", "X28", "X29", "X30", "X31", "X32", "X33", "X34", "X35", "X36", "X37", "X38", "X39", "X40", "X41"}
+	x1000text = []string{"", " Duizend ", " Miljoen ", " Miljard ", " Biljoen ", " Biljard ", " Triljoen ", " Triljard ", " Quadriljoen ", " Quadriljard ", " Quintiljoen ", " Quintiljard ", " Sextiljoen ", " Sextiljard ", " Septiljoen ", " Septiljard ", " Octiljoen ", " Octiljard ", " Noniljoen ", " Noniljard ", " Deciljoen ", " Deciljard ", " Undeciljoen ", " Undeciljard ", " Duodeciljoen ", " Duodeciljard ", " Tredeciljoen ", " Tredeciljard ", " Quattuordeciljoen ", " Quattuordeciljard ", " Quindeciljoen ", " Quindeciljard ", " Sedeciljoen ", " Sedeciljard ", " Septendeciljoen ", " Septendeciljard ", " Octodeciljoen ", " Octodeciljard ", " Novemdeciljoen ", " Novemdeciljard ", " Vigintiljoen ", " Vigintiljard "}
 )
 
-const maxIndex = 21 // Maximale index om fouten te voorkomen
+const maxIndex = 41 // Maximale index om fouten te voorkomen
 
 type Number struct {
 	amount        big.Int
