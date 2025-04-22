@@ -73,19 +73,17 @@ func setValue(value *Number, input string) {
 	value.originalInput = input // Bewaar originele invoer
 	value.hasSuffix = false     // Standaard: geen suffix
 
-	// Verwijder eventuele spaties en converteer , naar . voor consistentie
-	cleanInput := strings.ReplaceAll(input, ",", ".")
-	cleanInput = strings.ReplaceAll(cleanInput, " ", "")
-
+	// Zoek eerst naar een suffix
 	found := false
+	var numberPart string
 	for i := len(x1000) - 1; i > 0; i-- { // Loop door x1000 vanaf de grootste waarde
 		suffix := x1000[i]
-		if strings.HasSuffix(cleanInput, suffix) { // Controleer of input eindigt op de suffix
-			numberPart := strings.TrimSuffix(cleanInput, suffix)
-			// Verwijder decimaal gedeelte als het bestaat
-			if strings.Contains(numberPart, ".") {
-				numberPart = strings.Split(numberPart, ".")[0]
-			}
+		if strings.HasSuffix(input, suffix) { // Controleer of input eindigt op de suffix
+			numberPart = strings.TrimSuffix(input, suffix)
+			// Verwijder alle spaties, punten en komma's
+			numberPart = strings.ReplaceAll(numberPart, " ", "")
+			numberPart = strings.ReplaceAll(numberPart, ".", "")
+			numberPart = strings.ReplaceAll(numberPart, ",", "")
 			// Controleer of numberPart een geldig getal is
 			if _, ok := value.amount.SetString(numberPart, 10); !ok {
 				fmt.Println("Ongeldige invoer: geen geldig getal")
@@ -100,10 +98,10 @@ func setValue(value *Number, input string) {
 	}
 
 	if !found { // Geen geldige suffix gevonden, behandel het als een normaal getal
-		// Verwijder decimaal gedeelte als het bestaat
-		if strings.Contains(cleanInput, ".") {
-			cleanInput = strings.Split(cleanInput, ".")[0]
-		}
+		// Verwijder alle spaties, punten en komma's
+		cleanInput := strings.ReplaceAll(input, " ", "")
+		cleanInput = strings.ReplaceAll(cleanInput, ".", "")
+		cleanInput = strings.ReplaceAll(cleanInput, ",", "")
 		// Controleer of cleanInput een geldig getal is
 		if _, ok := value.amount.SetString(cleanInput, 10); !ok {
 			fmt.Println("Ongeldige invoer: geen geldig getal")
