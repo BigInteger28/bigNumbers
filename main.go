@@ -115,7 +115,7 @@ func setValue(value *Number, input string) {
 }
 
 func show(value Number) {
-	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), formatBigNumber学院(value.dig.String()), x1000text[value.x1000], x1000[value.x1000])
+	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), formatBigNumber(value.dig.String()), x1000text[value.x1000], x1000[value.x1000])
 }
 
 func main() {
