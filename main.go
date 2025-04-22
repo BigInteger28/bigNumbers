@@ -60,7 +60,7 @@ func setX1000(value *Number) {
 	divisor := new(big.Int).Exp(big.NewInt(1000), big.NewInt(int64(value.x1000)), nil)
 	value.dig.Div(&value.amount, divisor)
 
-	// **Afkappen na de eerste 3 significante cijfers**
+	// **Afkappen na de eerste 7 significante cijfers**
 	digStr := value.dig.String()
 	if len(digStr) > 7 { // Zorg ervoor dat we niet te veel cijfers tonen
 		digStr = digStr[:7]
@@ -69,16 +69,28 @@ func setX1000(value *Number) {
 }
 
 // Zet een geldwaarde met of zonder x1000-suffix om in een groot getal
-func setMoney(value *Number, input string) {
+func setValue(value *Number, input string) {
 	value.originalInput = input // Bewaar originele invoer
 	value.hasSuffix = false     // Standaard: geen suffix
+
+	// Verwijder eventuele spaties en converteer , naar . voor consistentie
+	cleanInput := strings.ReplaceAll(input, ",", ".")
+	cleanInput = strings.ReplaceAll(cleanInput, " ", "")
 
 	found := false
 	for i := len(x1000) - 1; i > 0; i-- { // Loop door x1000 vanaf de grootste waarde
 		suffix := x1000[i]
-		if strings.HasSuffix(input, suffix) { // Controleer of input eindigt op de suffix
-			numberPart := strings.TrimSuffix(input, suffix)
-			value.amount.SetString(numberPart, 10)
+		if strings.HasSuffix(cleanInput, suffix) { // Controleer of input eindigt op de suffix
+			numberPart := strings.TrimSuffix(cleanInput, suffix)
+			// Verwijder decimaal gedeelte als het bestaat
+			if strings.Contains(numberPart, ".") {
+				numberPart = strings.Split(numberPart, ".")[0]
+			}
+			// Controleer of numberPart een geldig getal is
+			if _, ok := value.amount.SetString(numberPart, 10); !ok {
+				fmt.Println("Ongeldige invoer: geen geldig getal")
+				return
+			}
 			multiplier := new(big.Int).Exp(big.NewInt(1000), big.NewInt(int64(i)), nil)
 			value.amount.Mul(&value.amount, multiplier)
 			value.hasSuffix = true // Markeer dat invoer een suffix had
@@ -88,14 +100,22 @@ func setMoney(value *Number, input string) {
 	}
 
 	if !found { // Geen geldige suffix gevonden, behandel het als een normaal getal
-		value.amount.SetString(input, 10)
+		// Verwijder decimaal gedeelte als het bestaat
+		if strings.Contains(cleanInput, ".") {
+			cleanInput = strings.Split(cleanInput, ".")[0]
+		}
+		// Controleer of cleanInput een geldig getal is
+		if _, ok := value.amount.SetString(cleanInput, 10); !ok {
+			fmt.Println("Ongeldige invoer: geen geldig getal")
+			return
+		}
 	}
 
 	setX1000(value)
 }
 
 func show(value Number) {
-	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), formatBigNumber(value.dig.String()), x1000text[value.x1000], x1000[value.x1000])
+	fmt.Printf("\n%s\n%s %s%s\n", formatBigNumber(value.amount.String()), formatBigNumber学院(value.dig.String()), x1000text[value.x1000], x1000[value.x1000])
 }
 
 func main() {
@@ -104,7 +124,7 @@ func main() {
 		fmt.Print("\nValue: ")
 		var input string
 		fmt.Scanln(&input)
-		setMoney(&value, input)
+		setValue(&value, input)
 		show(value)
 	}
 }
