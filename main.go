@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"math/big"
+	"os"
 	"strings"
 )
 
@@ -118,10 +120,11 @@ func show(value Number) {
 
 func main() {
 	var value Number
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("\nValue: ")
-		var input string
-		fmt.Scanln(&input)
+		scanner.Scan()
+		input := scanner.Text()
 		setValue(&value, input)
 		show(value)
 	}
