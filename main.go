@@ -51,7 +51,11 @@ func setX1000(value *Number) {
 	length := len(strAmount)
 
 	// Bepaal index (elke 3 extra cijfers betekent +1 in x1000-index)
-	value.x1000 = (length - 1) / 3
+	if strAmount[0] == '-' {
+		geld.x1000 = (length - 2) / 3
+	} else {
+	    geld.x1000 = (length - 1) / 3
+	}
 
 	// **Voorkom dat x1000 buiten de limiet gaat**
 	if value.x1000 > maxIndex {
@@ -63,10 +67,13 @@ func setX1000(value *Number) {
 	value.dig.Div(&value.amount, divisor)
 
 	// **Afkappen na de eerste 7 significante cijfers**
-	digStr := value.dig.String()
-	if len(digStr) > 7 { // Zorg ervoor dat we niet te veel cijfers tonen
-		digStr = digStr[:7]
-	}
+    digStr := geld.dig.String()
+    if len(digStr) > 0 && digStr[0] == '-' {
+        offset = 1
+    }
+    if len(digStr) > 7+offset {
+        digStr = digStr[:7+offset]
+    }
 	value.dig.SetString(digStr, 10) // Zet terug naar een big.Int
 }
 
