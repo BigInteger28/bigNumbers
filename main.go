@@ -45,36 +45,34 @@ func formatBigNumber(s string) string {
 	return strings.Join(parts, " ")
 }
 
-// Bepaalt de juiste x1000-index en verwerkt decimalen met afkapping
+// Bepaalt de juiste x1000-index en kapt af tot 3 significante cijfers
 func setX1000(value *Number) {
 	strAmount := value.amount.String()
 	length := len(strAmount)
 
-	// Bepaal index (elke 3 extra cijfers betekent +1 in x1000-index)
-	if strAmount[0] == '-' {
-		geld.x1000 = (length - 2) / 3
-	} else {
-	    geld.x1000 = (length - 1) / 3
+	// Controleer op ongeldige input
+	if length == 0 {
+		value.x1000 = 0
+		value.dig.SetInt64(0)
+		return
 	}
 
-	// **Voorkom dat x1000 buiten de limiet gaat**
+	// Bepaal index (elke 3 extra cijfers betekent +1 in x1000-index)
+	if strAmount[0] == '-' {
+		value.x1000 = (length - 2) / 3
+	} else {
+		value.x1000 = (length - 1) / 3
+	}
+
+	// Voorkom dat x1000 buiten de limiet gaat
 	if value.x1000 > maxIndex {
 		value.x1000 = maxIndex
 	}
-
-	// Deel het getal door 1000^index
-	divisor := new(big.Int).Exp(big.NewInt(1000), big.NewInt(int64(value.x1000)), nil)
-	value.dig.Div(&value.amount, divisor)
-
-	// **Afkappen na de eerste 7 significante cijfers**
-    digStr := geld.dig.String()
-    if len(digStr) > 0 && digStr[0] == '-' {
-        offset = 1
-    }
-    if len(digStr) > 7+offset {
-        digStr = digStr[:7+offset]
-    }
-	value.dig.SetString(digStr, 10) // Zet terug naar een big.Int
+	
+	truncated := length-(int(value.x1000)*3)
+	valueS := value.amount.String()
+	valueS = valueS[:truncated]
+	value.dig.SetString(valueS, 10)
 }
 
 // Zet een geldwaarde met of zonder x1000-suffix om in een groot getal
